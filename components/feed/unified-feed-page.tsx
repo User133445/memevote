@@ -110,7 +110,7 @@ async function getPersonalizedFeed(userId: string, page: number = 0) {
 
   const allMemes = [...(collaborativeMemes || []), ...(eloMemes || [])];
   const uniqueMemes = Array.from(
-    new Map(allMemes.map(m => [m.id, m])).values()
+    new Map(allMemes.map((m: any) => [m.id, m])).values()
   );
 
   return uniqueMemes.sort((a, b) => {
@@ -210,7 +210,7 @@ export function UnifiedFeedPage() {
       
       if (personalizedMemes && personalizedMemes.length > 0) {
         setMemes((prev) => {
-          const newMemes = personalizedMemes.filter(m => !prev.some(p => p.id === m.id));
+          const newMemes = personalizedMemes.filter((m: any) => !prev.some((p: any) => p.id === m.id));
           return pageNum === 0 ? personalizedMemes : [...prev, ...newMemes];
         });
         setHasMore(personalizedMemes.length === 10);
@@ -243,7 +243,7 @@ export function UnifiedFeedPage() {
 
       if (data && data.length > 0) {
         setMemes((prev) => {
-          const newMemes = data.filter(m => !prev.some(p => p.id === m.id));
+          const newMemes = data.filter((m: any) => !prev.some((p: any) => p.id === m.id));
           return pageNum === 0 ? data : [...prev, ...newMemes];
         });
         setHasMore(data.length === 10);
