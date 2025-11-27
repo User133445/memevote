@@ -84,13 +84,67 @@ export default function UploadPage() {
         throw new Error("Supabase non configuré");
       }
 
-      // Get user ID
-      const {
+      // Get user ID - try to authenticate if not already authenticated
+      let {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (!user) {
-        throw new Error("Utilisateur non connecté");
+        // Try to authenticate with wallet
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: `${publicKey.toString()}@wallet.memevote.fun`,
+          password: publicKey.toString(),
+        });
+
+        if (authError && authError.message.includes("Invalid login")) {
+          // Create new user if doesn't exist
+          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+            email: `${publicKey.toString()}@wallet.memevote.fun`,
+            password: publicKey.toString(),
+            options: {
+              data: {
+                wallet_address: publicKey.toString(),
+                username: `user_${publicKey.toString().slice(0, 8)}`,
+              },
+            },
+          });
+
+          if (signUpError) {
+            throw new Error(`Erreur d'authentification: ${signUpError.message}`);
+          }
+
+          user = signUpData.user;
+
+          // Create profile if user was created
+          if (user) {
+            const walletName = (window as any).solana?.isPhantom ? "Phantom" :
+                              (window as any).solflare ? "Solflare" :
+                              (window as any).backpack ? "Backpack" :
+                              (window as any).okxwallet ? "OKX" :
+                              (window as any).trustwallet ? "Trust Wallet" :
+                              (window as any).ledger ? "Ledger" : "Unknown";
+
+            await supabase
+              .from("profiles")
+              .insert({
+                id: user.id,
+                wallet_address: publicKey.toString(),
+                username: `user_${publicKey.toString().slice(0, 8)}`,
+                points: 0,
+                level: 1,
+                wallet_name: walletName,
+                first_connection_bonus_claimed: false,
+              });
+          }
+        } else if (authError) {
+          throw new Error(`Erreur d'authentification: ${authError.message}`);
+        } else {
+          user = authData.user;
+        }
+      }
+
+      if (!user) {
+        throw new Error("Impossible de s'authentifier. Veuillez réessayer.");
       }
 
       // Determine file type
