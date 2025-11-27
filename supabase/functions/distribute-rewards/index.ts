@@ -33,9 +33,10 @@ serve(async (req) => {
 
     // Get daily leaderboard for today
     const { data: leaderboard, error: leaderboardError } = await supabaseClient
-      .from('leaderboard_daily')
-      .select('*, profiles(wallet_address)')
-      .eq('date', todayISO)
+      .from('leaderboard')
+      .select('*, memes!inner(user_id), profiles!memes_user_id_fkey(wallet_address)')
+      .eq('period_type', 'daily')
+      .eq('period_start', todayISO.split('T')[0]) // Extract date part (YYYY-MM-DD)
       .order('score', { ascending: false })
       .limit(50)
 
