@@ -22,7 +22,8 @@ import {
   ChevronRight,
   Headphones,
   Settings as SettingsIcon,
-  Lock
+  Lock,
+  Twitter
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -336,6 +337,19 @@ export default function SettingsPage() {
             <CardTitle>Support</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
+            <a href="https://x.com/memevotefun" target="_blank" rel="noopener noreferrer" className="block">
+              <div className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <Twitter className="h-5 w-5 text-blue-400" />
+                  <span className="font-medium">Twitter Officiel</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">External</span>
+                  <div className="w-4 h-4 border border-current rounded"></div>
+                </div>
+              </div>
+            </a>
+            <Separator />
             <a href="https://t.me/memevote" target="_blank" rel="noopener noreferrer" className="block">
               <div className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3">
