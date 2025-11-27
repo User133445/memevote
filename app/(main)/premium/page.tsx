@@ -104,14 +104,14 @@ export default function PremiumPage() {
   useEffect(() => {
     if (isPremium && supabase) {
       // Fetch user name for cancel dialog
-      supabase.auth.getUser().then(({ data: user }) => {
+      supabase.auth.getUser().then(({ data: user }: { data: any }) => {
         if (user.user) {
           supabase
             .from("profiles")
             .select("username")
             .eq("id", user.user.id)
             .single()
-            .then(({ data }) => {
+            .then(({ data }: { data: any }) => {
               if (data?.username) {
                 setUserName(data.username);
               }

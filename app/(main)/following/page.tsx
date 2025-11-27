@@ -61,7 +61,7 @@ export default function FollowingPage() {
         return;
       }
 
-      const followingIds = following.map((f) => f.following_id);
+      const followingIds = following.map((f: any) => f.following_id);
 
       // Get memes from followed users
       const { data, error } = await supabase
@@ -76,7 +76,7 @@ export default function FollowingPage() {
 
       if (data && data.length > 0) {
         setMemes((prev) => {
-          const newMemes = data.filter((m) => !prev.some((p) => p.id === m.id));
+          const newMemes = data.filter((m: any) => !prev.some((p: any) => p.id === m.id));
           return [...prev, ...newMemes];
         });
         setHasMore(data.length === 10);
@@ -97,7 +97,7 @@ export default function FollowingPage() {
     if (!supabase || !connected || !publicKey) return;
 
     const { data: user } = supabase.auth.getUser();
-    user.then(({ user: authUser }) => {
+    user.then(({ user: authUser }: { user: any }) => {
       if (!authUser) return;
 
       const channel = supabase
@@ -110,7 +110,7 @@ export default function FollowingPage() {
             table: "memes",
             filter: "status=eq.approved",
           },
-          (payload) => {
+          (payload: any) => {
             // Check if meme is from a followed user
             supabase
               .from("followers")
@@ -118,7 +118,7 @@ export default function FollowingPage() {
               .eq("follower_id", authUser.id)
               .eq("following_id", payload.new.user_id)
               .single()
-              .then(({ data: isFollowing }) => {
+              .then(({ data: isFollowing }: { data: any }) => {
                 if (isFollowing) {
                   // Fetch full meme details
                   supabase
@@ -126,7 +126,7 @@ export default function FollowingPage() {
                     .select("*, profiles:user_id(username, avatar_url, reputation_score)")
                     .eq("id", payload.new.id)
                     .single()
-                    .then(({ data: meme }) => {
+                    .then(({ data: meme }: { data: any }) => {
                       if (meme) {
                         setMemes((prev) => [meme, ...prev]);
                       }

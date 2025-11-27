@@ -84,8 +84,8 @@ export default function ReferPage() {
       .eq("referrer_id", user.user.id);
 
     if (referrals) {
-      const totalEarnings = referrals.reduce((sum, r) => sum + parseFloat(r.total_earnings || 0), 0);
-      const paidOut = referrals.reduce((sum, r) => sum + parseFloat(r.paid_out || 0), 0);
+      const totalEarnings = referrals.reduce((sum: number, r: any) => sum + parseFloat(r.total_earnings || 0), 0);
+      const paidOut = referrals.reduce((sum: number, r: any) => sum + parseFloat(r.paid_out || 0), 0);
 
       setStats({
         totalReferrals: referrals.length,

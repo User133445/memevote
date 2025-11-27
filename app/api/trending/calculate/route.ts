@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     const sorted = viralScores.sort((a, b) => b.viral_score - a.viral_score);
     const hotNow = sorted.slice(0, 20);
     const risingStars = sorted
-      .filter((m) => {
-        const meme = memes.find((mm) => mm.id === m.meme_id);
+      .filter((m: any) => {
+        const meme = memes.find((mm: any) => mm.id === m.meme_id);
         const hoursSinceCreation = (Date.now() - new Date(meme!.created_at).getTime()) / (1000 * 60 * 60);
         return hoursSinceCreation < 24 && m.viral_score > 50; // Rising if less than 24h old and score > 50
       })
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Insert hot_now
     if (hotNow.length > 0) {
       await supabase.from("trending_memes").insert(
-        hotNow.map((item) => ({
+        hotNow.map((item: any) => ({
           meme_id: item.meme_id,
           trending_type: "hot_now",
           viral_score: item.viral_score,
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     // Insert rising_stars
     if (risingStars.length > 0) {
       await supabase.from("trending_memes").insert(
-        risingStars.map((item) => ({
+        risingStars.map((item: any) => ({
           meme_id: item.meme_id,
           trending_type: "rising_stars",
           viral_score: item.viral_score,

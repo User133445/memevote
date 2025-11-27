@@ -57,8 +57,8 @@ export default function DashboardPage() {
       .select("id")
       .eq("user_id", publicKey?.toString());
 
-    const totalViews = memes?.reduce((sum, m) => sum + (m.views || 0), 0) || 0;
-    const totalVotes = memes?.reduce((sum, m) => sum + (m.score || 0), 0) || 0;
+    const totalViews = memes?.reduce((sum: number, m: any) => sum + (m.views || 0), 0) || 0;
+    const totalVotes = memes?.reduce((sum: number, m: any) => sum + (m.score || 0), 0) || 0;
 
     setStats({
       totalMemes: memes?.length || 0,

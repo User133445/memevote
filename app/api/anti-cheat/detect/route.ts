@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
 
     // Simple fraud detection algorithm
     const voteCount = votes?.length || 0;
-    const upvoteCount = votes?.filter((v) => v.type === 1).length || 0;
-    const downvoteCount = votes?.filter((v) => v.type === -1).length || 0;
+    const upvoteCount = votes?.filter((v: any) => v.type === 1).length || 0;
+    const downvoteCount = votes?.filter((v: any) => v.type === -1).length || 0;
 
     // Check for suspicious patterns
     let fraudScore = 0;

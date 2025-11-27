@@ -55,7 +55,7 @@ async function findSimilarUsers(userId: string, limit: number = 10) {
   if (!userInteractions || userInteractions.length === 0) return [];
 
   // Find users who interacted with similar memes
-  const memeIds = userInteractions.map(i => i.meme_id);
+  const memeIds = userInteractions.map((i: any) => i.meme_id);
   const { data: similarUsers } = await supabase
     .from("user_meme_interactions")
     .select("user_id")
@@ -66,7 +66,7 @@ async function findSimilarUsers(userId: string, limit: number = 10) {
 
   // Count overlaps (simple collaborative filtering)
   const userOverlaps: Record<string, number> = {};
-  similarUsers.forEach(su => {
+  similarUsers.forEach((su: any) => {
     userOverlaps[su.user_id] = (userOverlaps[su.user_id] || 0) + 1;
   });
 
@@ -193,7 +193,7 @@ export default function ForYouPage() {
 
       if (data && data.length > 0) {
         setMemes((prev) => {
-          const newMemes = data.filter(m => !prev.some(p => p.id === m.id));
+          const newMemes = data.filter((m: any) => !prev.some((p: any) => p.id === m.id));
           return [...prev, ...newMemes];
         });
         setHasMore(data.length === 10);

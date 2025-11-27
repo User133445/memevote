@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         .gte("created_at", fiveMinutesAgo.toISOString());
 
       if (sameIpVotes) {
-        const uniqueUsers = new Set(sameIpVotes.map(v => v.user_id));
+        const uniqueUsers = new Set(sameIpVotes.map((v: any) => v.user_id));
         if (uniqueUsers.size > 5) {
           return NextResponse.json(
             {

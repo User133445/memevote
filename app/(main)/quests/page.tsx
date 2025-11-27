@@ -74,7 +74,7 @@ export default function QuestsPage() {
         const progress: Record<string, number> = {};
         const completed = new Set<string>();
         
-        data.forEach((item) => {
+        data.forEach((item: any) => {
           progress[item.quest_id] = item.current_value;
           if (item.current_value >= item.target_value) {
             completed.add(item.quest_id);

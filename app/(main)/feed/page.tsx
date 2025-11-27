@@ -40,7 +40,7 @@ export default function FeedPage() {
 
       if (data && data.length > 0) {
         setMemes((prev) => {
-          const newMemes = data.filter(d => !prev.some(p => p.id === d.id));
+          const newMemes = data.filter((d: any) => !prev.some((p: any) => p.id === d.id));
           return [...prev, ...newMemes];
         });
         setHasMore(data.length === 5);
@@ -81,13 +81,13 @@ export default function FeedPage() {
           table: "memes",
           filter: "status=eq.approved"
         },
-        (payload) => {
+        (payload: any) => {
           supabase
             .from("memes")
             .select("*, profiles:user_id(username, avatar_url)")
             .eq("id", payload.new.id)
             .single()
-            .then(({ data }) => {
+            .then(({ data }: { data: any }) => {
               if (data) {
                 setMemes((prev) => [data, ...prev]);
               }

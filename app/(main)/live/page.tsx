@@ -38,7 +38,7 @@ export default function LivePage() {
           table: "memes",
           filter: "status=eq.approved",
         },
-        (payload) => {
+        (payload: any) => {
           fetchRecentMemes();
           fetchActivities();
         }
@@ -99,7 +99,7 @@ export default function LivePage() {
       .limit(20);
 
     if (votes) {
-      const activities = votes.map((vote) => ({
+      const activities = votes.map((vote: any) => ({
         id: vote.id,
         type: vote.type === 1 ? "upvote" : "downvote",
         meme: vote.memes,
