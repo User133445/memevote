@@ -56,7 +56,7 @@ export function MemeReactions({ memeId }: { memeId: string }) {
         const counts: Record<string, number> = {};
         const userReactions = new Set<string>();
 
-        reactionData.forEach((r) => {
+        reactionData.forEach((r: any) => {
           counts[r.reaction_type] = (counts[r.reaction_type] || 0) + 1;
           if (userId && r.user_id === userId) {
             userReactions.add(r.reaction_type);
