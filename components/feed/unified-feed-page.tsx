@@ -56,7 +56,7 @@ async function findSimilarUsers(userId: string, limit: number = 10) {
 
   if (!userInteractions || userInteractions.length === 0) return [];
 
-  const memeIds = userInteractions.map(i => i.meme_id);
+  const memeIds = userInteractions.map((i: any) => i.meme_id);
   const { data: similarUsers } = await supabase
     .from("user_meme_interactions")
     .select("user_id")
