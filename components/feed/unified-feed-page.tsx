@@ -279,7 +279,7 @@ export function UnifiedFeedPage() {
           table: "memes",
           filter: "status=eq.approved"
         },
-        (payload) => {
+        (payload: any) => {
           supabase
             .from("memes")
             .select("*, profiles:user_id(username, avatar_url)")
