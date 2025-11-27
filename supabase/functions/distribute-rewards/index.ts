@@ -32,11 +32,18 @@ serve(async (req) => {
     const todayISO = today.toISOString()
 
     // Get daily leaderboard for today
+    const todayDate = todayISO.split('T')[0] // Extract date part (YYYY-MM-DD)
     const { data: leaderboard, error: leaderboardError } = await supabaseClient
       .from('leaderboard')
-      .select('*, memes!inner(user_id), profiles!memes_user_id_fkey(wallet_address)')
+      .select(`
+        *,
+        memes!inner(
+          user_id,
+          profiles:user_id(wallet_address)
+        )
+      `)
       .eq('period_type', 'daily')
-      .eq('period_start', todayISO.split('T')[0]) // Extract date part (YYYY-MM-DD)
+      .eq('period_start', todayDate)
       .order('score', { ascending: false })
       .limit(50)
 
@@ -69,8 +76,8 @@ serve(async (req) => {
       }
 
       return {
-        user_id: entry.user_id,
-        wallet_address: entry.profiles?.wallet_address || entry.wallet_address,
+        user_id: entry.memes?.user_id,
+        wallet_address: entry.memes?.profiles?.wallet_address,
         amount,
         rank: index + 1,
         score: entry.score,
