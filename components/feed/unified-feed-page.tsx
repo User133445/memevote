@@ -182,7 +182,7 @@ export function UnifiedFeedPage() {
 
       if (data && data.length > 0) {
         setMemes((prev) => {
-          const newMemes = data.filter(d => !prev.some(p => p.id === d.id));
+          const newMemes = data.filter((d: any) => !prev.some((p: any) => p.id === d.id));
           return pageNum === 0 ? data : [...prev, ...newMemes];
         });
         setHasMore(data.length === 5);
