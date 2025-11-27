@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         .limit(10);
 
       if (sameFingerprint && sameFingerprint.length > 3) {
-        const uniqueUsers = new Set(sameFingerprint.map(f => f.user_id));
+        const uniqueUsers = new Set(sameFingerprint.map((f: any) => f.user_id));
         if (uniqueUsers.size > 3) {
           return NextResponse.json(
             {
