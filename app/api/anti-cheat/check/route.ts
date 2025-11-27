@@ -101,8 +101,8 @@ export async function POST(request: NextRequest) {
       .limit(50);
 
     if (userVotes && userVotes.length >= 20) {
-      const upvotes = userVotes.filter(v => v.vote_type === "up").length;
-      const downvotes = userVotes.filter(v => v.vote_type === "down").length;
+      const upvotes = userVotes.filter((v: any) => v.vote_type === "up").length;
+      const downvotes = userVotes.filter((v: any) => v.vote_type === "down").length;
       
       // If 95%+ same vote type, likely a bot
       if (upvotes / userVotes.length > 0.95 || downvotes / userVotes.length > 0.95) {
