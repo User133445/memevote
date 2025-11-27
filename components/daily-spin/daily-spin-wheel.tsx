@@ -19,6 +19,7 @@ interface SpinReward {
   reward_description: string;
   reward_value: number;
   reward_duration: number;
+  probability: number;
 }
 
 interface UserSpin {
