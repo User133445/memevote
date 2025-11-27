@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fond violet boîte -->
+  <path d="M100 150 L412 100 L450 350 L140 400 Z" fill="#d894f2" stroke="black" stroke-width="15" stroke-linejoin="round"/>
+  <path d="M100 150 L60 300 L140 400" fill="#d894f2" stroke="black" stroke-width="15" stroke-linejoin="round"/>
+  
+  <!-- Coté gauche foncé -->
+  <path d="M60 300 L100 150 L140 400 Z" fill="#b56bd6" opacity="0.5"/>
+  
+  <!-- Fente vote -->
+  <ellipse cx="270" cy="180" rx="80" ry="10" fill="black" transform="rotate(-8)"/>
+  
+  <!-- Papier vote -->
+  <path d="M230 80 L310 70 L290 180 L210 190 Z" fill="white" stroke="black" stroke-width="10" stroke-linejoin="round"/>
+  <path d="M240 110 L280 105" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  <path d="M235 140 L275 135" stroke="black" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Visage mignon -->
+  <circle cx="200" cy="330" r="10" fill="black"/>
+  <circle cx="320" cy="310" r="10" fill="black"/>
+  <path d="M240 340 Q260 360 280 335" fill="none" stroke="black" stroke-width="8" stroke-linecap="round"/>
+</svg>

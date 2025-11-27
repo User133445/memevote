@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 250 20% 4%;
+    --foreground: 0 0% 98%;
+    --card: 250 20% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 250 20% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 270 91% 65%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 250 20% 10%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 250 20% 12%;
+    --muted-foreground: 250 10% 60%;
+    --accent: 330 81% 60%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 250 20% 18%;
+    --input: 250 20% 18%;
+    --ring: 270 91% 65%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-cyber-darker text-foreground;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .glow-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+  }
+  
+  .neon-border {
+    border: 1px solid;
+    border-image: linear-gradient(45deg, #a855f7, #ec4899) 1;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  
+  .glass-effect {
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent));
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Animations */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-confetti {
+  animation: confetti-fall 2s ease-out forwards;
+}
+
