@@ -210,56 +210,68 @@ ALTER TABLE battle_votes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
 
 -- Profiles policies
+DROP POLICY IF EXISTS "Public profiles are viewable by everyone" ON profiles;
 CREATE POLICY "Public profiles are viewable by everyone"
   ON profiles FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
   USING (auth.uid() = id);
 
 -- Memes policies
+DROP POLICY IF EXISTS "Memes are viewable by everyone" ON memes;
 CREATE POLICY "Memes are viewable by everyone"
   ON memes FOR SELECT
   USING (status = 'approved' OR auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own memes" ON memes;
 CREATE POLICY "Users can insert own memes"
   ON memes FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Votes policies
+DROP POLICY IF EXISTS "Votes are viewable by everyone" ON votes;
 CREATE POLICY "Votes are viewable by everyone"
   ON votes FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert own votes" ON votes;
 CREATE POLICY "Users can insert own votes"
   ON votes FOR INSERT
   WITH CHECK (true);
 
 -- Leaderboard policies
+DROP POLICY IF EXISTS "Leaderboard is viewable by everyone" ON leaderboard;
 CREATE POLICY "Leaderboard is viewable by everyone"
   ON leaderboard FOR SELECT
   USING (true);
 
 -- Staking policies
+DROP POLICY IF EXISTS "Staking is viewable by everyone" ON staking;
 CREATE POLICY "Staking is viewable by everyone"
   ON staking FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert own staking" ON staking;
 CREATE POLICY "Users can insert own staking"
   ON staking FOR INSERT
   WITH CHECK (true);
 
 -- Referrals policies
+DROP POLICY IF EXISTS "Referrals are viewable by referrer" ON referrals;
 CREATE POLICY "Referrals are viewable by referrer"
   ON referrals FOR SELECT
   USING (auth.uid() = referrer_id OR auth.uid() = referred_id);
 
 -- Comments policies
+DROP POLICY IF EXISTS "Comments are viewable by everyone" ON comments;
 CREATE POLICY "Comments are viewable by everyone"
   ON comments FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can insert own comments" ON comments;
 CREATE POLICY "Users can insert own comments"
   ON comments FOR INSERT
   WITH CHECK (auth.uid() = user_id);

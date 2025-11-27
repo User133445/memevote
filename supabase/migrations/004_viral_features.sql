@@ -305,15 +305,19 @@ DROP POLICY IF EXISTS "Users can read their own preferences" ON user_preferences
 CREATE POLICY "Users can read their own preferences" ON user_preferences
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can read their own quest progress" ON user_quest_progress;
 CREATE POLICY "Users can read their own quest progress" ON user_quest_progress
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can read all tips" ON tips;
 CREATE POLICY "Users can read all tips" ON tips
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Users can read reputation history" ON reputation_history;
 CREATE POLICY "Users can read reputation history" ON reputation_history
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Users can read fee history" ON fee_history;
 CREATE POLICY "Users can read fee history" ON fee_history
   FOR SELECT USING (true);
 

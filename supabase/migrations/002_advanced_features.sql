@@ -200,57 +200,69 @@ CREATE POLICY "Collaborative memes are viewable by everyone"
   ON collaborative_memes FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can manage own collaborative memes" ON collaborative_memes;
 CREATE POLICY "Users can manage own collaborative memes"
   ON collaborative_memes FOR ALL
   USING (auth.uid() IN (SELECT user_id FROM memes WHERE id = meme_id) OR auth.uid() = collaborator_id);
 
 -- Trending memes policies
+DROP POLICY IF EXISTS "Trending memes are viewable by everyone" ON trending_memes;
 CREATE POLICY "Trending memes are viewable by everyone"
   ON trending_memes FOR SELECT
   USING (true);
 
 -- Bridge transactions policies
+DROP POLICY IF EXISTS "Users can view own bridge transactions" ON bridge_transactions;
 CREATE POLICY "Users can view own bridge transactions"
   ON bridge_transactions FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own bridge transactions" ON bridge_transactions;
 CREATE POLICY "Users can insert own bridge transactions"
   ON bridge_transactions FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Followers policies
+DROP POLICY IF EXISTS "Followers are viewable by everyone" ON followers;
 CREATE POLICY "Followers are viewable by everyone"
   ON followers FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Users can manage own follows" ON followers;
 CREATE POLICY "Users can manage own follows"
   ON followers FOR ALL
   USING (auth.uid() = follower_id);
 
 -- Direct messages policies
+DROP POLICY IF EXISTS "Users can view own messages" ON direct_messages;
 CREATE POLICY "Users can view own messages"
   ON direct_messages FOR SELECT
   USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
 
+DROP POLICY IF EXISTS "Users can send messages" ON direct_messages;
 CREATE POLICY "Users can send messages"
   ON direct_messages FOR INSERT
   WITH CHECK (auth.uid() = sender_id);
 
 -- Wallet transactions policies
+DROP POLICY IF EXISTS "Users can view own wallet transactions" ON wallet_transactions;
 CREATE POLICY "Users can view own wallet transactions"
   ON wallet_transactions FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own wallet transactions" ON wallet_transactions;
 CREATE POLICY "Users can insert own wallet transactions"
   ON wallet_transactions FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Achievements policies
+DROP POLICY IF EXISTS "Achievements are viewable by everyone" ON achievements;
 CREATE POLICY "Achievements are viewable by everyone"
   ON achievements FOR SELECT
   USING (true);
 
 -- Push subscriptions policies
+DROP POLICY IF EXISTS "Users can manage own push subscriptions" ON push_subscriptions;
 CREATE POLICY "Users can manage own push subscriptions"
   ON push_subscriptions FOR ALL
   USING (auth.uid() = user_id);
