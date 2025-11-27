@@ -112,7 +112,7 @@ export function FeedPage() {
               Partagez votre premier meme ! 🚀
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Gagnez des récompenses dès aujourd'hui
+              Gagnez des récompenses dès aujourd&apos;hui
             </p>
             <Button asChild variant="neon" size="lg" className="gap-2">
               <Link href="/upload">
