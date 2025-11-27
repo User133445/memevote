@@ -26,13 +26,13 @@ serve(async (req) => {
       }
     )
 
-    // Get current date (UTC)
+    // Get current date (UTC) - extract only date part (YYYY-MM-DD)
     const today = new Date()
     today.setUTCHours(0, 0, 0, 0)
-    const todayISO = today.toISOString()
+    const todayDate = today.toISOString().split('T')[0] // Extract date part: "YYYY-MM-DD"
 
     // Get daily leaderboard for today
-    const todayDate = todayISO.split('T')[0] // Extract date part (YYYY-MM-DD)
+    // Use the base leaderboard table with period_type filter
     const { data: leaderboard, error: leaderboardError } = await supabaseClient
       .from('leaderboard')
       .select(`
@@ -43,7 +43,7 @@ serve(async (req) => {
         )
       `)
       .eq('period_type', 'daily')
-      .eq('period_start', todayDate)
+      .eq('period_start', todayDate) // Compare DATE with DATE string (YYYY-MM-DD)
       .order('score', { ascending: false })
       .limit(50)
 
@@ -101,7 +101,7 @@ serve(async (req) => {
       wallet_address: reward.wallet_address,
       amount: reward.amount,
       rank: reward.rank,
-      date: todayISO,
+      date: todayDate,
       status: 'pending', // Will be updated to 'completed' after transfer
       token_type: 'USDC', // or 'VOTE'
     }))
