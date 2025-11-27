@@ -39,7 +39,7 @@ serve(async (req) => {
         *,
         memes!inner(
           user_id,
-          profiles:user_id(wallet_address)
+          profiles(wallet_address)
         )
       `)
       .eq('period_type', 'daily')
@@ -75,9 +75,13 @@ serve(async (req) => {
         amount = 100 // Top 11-50
       }
 
+      // Extract user_id and wallet_address from nested structure
+      const meme = entry.memes as any
+      const profile = meme?.profiles as any
+      
       return {
-        user_id: entry.memes?.user_id,
-        wallet_address: entry.memes?.profiles?.wallet_address,
+        user_id: meme?.user_id,
+        wallet_address: profile?.wallet_address,
         amount,
         rank: index + 1,
         score: entry.score,
