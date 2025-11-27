@@ -66,7 +66,7 @@ async function findSimilarUsers(userId: string, limit: number = 10) {
   if (!similarUsers) return [];
 
   const userOverlaps: Record<string, number> = {};
-  similarUsers.forEach(su => {
+  similarUsers.forEach((su: any) => {
     userOverlaps[su.user_id] = (userOverlaps[su.user_id] || 0) + 1;
   });
 
