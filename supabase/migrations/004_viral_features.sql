@@ -301,6 +301,7 @@ ALTER TABLE reputation_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE fee_history ENABLE ROW LEVEL SECURITY;
 
 -- Basic policies (users can read their own data, admins can read all)
+DROP POLICY IF EXISTS "Users can read their own preferences" ON user_preferences;
 CREATE POLICY "Users can read their own preferences" ON user_preferences
   FOR SELECT USING (auth.uid() = user_id);
 

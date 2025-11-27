@@ -195,6 +195,7 @@ ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Collaborative memes policies
+DROP POLICY IF EXISTS "Collaborative memes are viewable by everyone" ON collaborative_memes;
 CREATE POLICY "Collaborative memes are viewable by everyone"
   ON collaborative_memes FOR SELECT
   USING (true);

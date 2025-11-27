@@ -175,6 +175,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger to update meme score on vote
+DROP TRIGGER IF EXISTS update_meme_score_trigger ON votes;
 CREATE TRIGGER update_meme_score_trigger
 AFTER INSERT OR UPDATE OR DELETE ON votes
 FOR EACH ROW
