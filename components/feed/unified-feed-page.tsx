@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createClient } from "@/lib/supabase/client";
 import { MemeCard } from "@/components/meme/meme-card";
+import { VirtualizedFeed } from "@/components/feed/virtualized-feed";
 import { useInView } from "react-intersection-observer";
 import { Loader2, Sparkles, Home, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -348,16 +349,9 @@ export function UnifiedFeedPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pb-24 max-w-xl">
-        {/* Ads Banner (Top) - Only if not premium */}
-        {!isPremium && (
-          <div className="mb-6">
-            <AdBanner variant="top" />
-          </div>
-        )}
-
-        {/* Empty State */}
-        {memes.length === 0 && !loading && (
+      {/* Empty State */}
+      {memes.length === 0 && !loading && (
+        <div className="container mx-auto px-4 pb-24 max-w-xl">
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
             <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center mb-6">
               <Sparkles className="h-10 w-10 text-purple-500" />
@@ -380,32 +374,31 @@ export function UnifiedFeedPage() {
               Upload First Meme
             </Button>
           </div>
-        )}
-
-        {/* Memes Feed */}
-        <div className="space-y-8 py-6">
-          {memes.map((meme, index) => (
-            <div key={meme.id}>
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <MemeCard meme={meme} />
-              </div>
-              
-              {/* In-Feed Ad every 5 memes - Only if not premium */}
-              {(index + 1) % 5 === 0 && !isPremium && (
-                <div className="mt-8 mb-8">
-                  <AdBanner variant="inline" />
-                </div>
-              )}
-            </div>
-          ))}
         </div>
+      )}
 
-        {/* Infinite Scroll Loader */}
-        {hasMore && (
-          <div ref={ref} className="flex justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
-          </div>
-        )}
+      {/* Memes Feed - Virtualized TikTok-style */}
+      {memes.length > 0 && (
+        <VirtualizedFeed
+          memes={memes}
+          hasMore={hasMore}
+          loading={loading}
+          onLoadMore={() => {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            if (activeTab === "feed") {
+              fetchFeed(nextPage);
+            } else {
+              if (connected && publicKey) {
+                fetchPersonalizedFeed(nextPage);
+              } else {
+                fetchTrendingFeed(nextPage);
+              }
+            }
+          }}
+          className="fixed top-32 bottom-0 left-0 right-0"
+        />
+      )}
 
         {/* End of Feed */}
         {!hasMore && memes.length > 0 && (
