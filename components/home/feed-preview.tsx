@@ -84,8 +84,16 @@ export function FeedPreview() {
           <p className="text-muted-foreground mb-4">
             Aucun meme pour le moment
           </p>
-          <Button asChild variant="neon" size="lg">
-            <Link href="/upload">Créer le premier meme</Link>
+          <Button 
+            variant="neon" 
+            size="lg"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent('open-upload-dialog'));
+              }
+            }}
+          >
+            Créer le premier meme
           </Button>
         </div>
       )}

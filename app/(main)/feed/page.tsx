@@ -126,11 +126,18 @@ export default function FeedPage() {
             <p className="text-muted-foreground mb-8 max-w-md">
               Be the first to drop a legendary meme and earn huge rewards.
             </p>
-            <Button asChild variant="neon" size="lg" className="w-full sm:w-auto shadow-xl shadow-purple-500/20">
-              <Link href="/upload">
-                <Upload className="h-5 w-5 mr-2" />
-                Upload First Meme
-              </Link>
+            <Button 
+              variant="neon" 
+              size="lg" 
+              className="w-full sm:w-auto shadow-xl shadow-purple-500/20"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent('open-upload-dialog'));
+                }
+              }}
+            >
+              <Upload className="h-5 w-5 mr-2" />
+              Upload First Meme
             </Button>
           </div>
         )}

@@ -27,11 +27,18 @@ export function HomeHero() {
 
         {/* CTA */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button asChild variant="neon" size="lg" className="text-lg gap-2">
-            <Link href="/upload">
-              <Upload className="h-5 w-5" />
-              Uploader un Meme
-            </Link>
+          <Button 
+            variant="neon" 
+            size="lg" 
+            className="text-lg gap-2"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent('open-upload-dialog'));
+              }
+            }}
+          >
+            <Upload className="h-5 w-5" />
+            Uploader un Meme
           </Button>
           <WalletConnect />
           <Button asChild variant="outline" size="lg" className="text-lg">

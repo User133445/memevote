@@ -114,9 +114,17 @@ export function FeedPage() {
             <p className="text-sm text-muted-foreground mb-4">
               Gagnez des récompenses dès aujourd&apos;hui
             </p>
-            <Button asChild variant="neon" size="lg" className="gap-2">
-              <Link href="/upload">
-                <Plus className="h-5 w-5" />
+            <Button 
+              variant="neon" 
+              size="lg" 
+              className="gap-2"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent('open-upload-dialog'));
+                }
+              }}
+            >
+              <Plus className="h-5 w-5" />
                 Créer le premier meme
               </Link>
             </Button>

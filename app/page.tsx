@@ -4,6 +4,8 @@ import { UnifiedFeedPage } from "@/components/feed/unified-feed-page";
 import { Navbar } from "@/components/navbar";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import { FloatingActionButton } from "@/components/floating-action-button";
+import { Footer } from "@/components/footer";
+import { FeedbackButton } from "@/components/feedback/feedback-button";
 
 export default function HomePage() {
   return (
@@ -12,8 +14,10 @@ export default function HomePage() {
       <main className="flex-1">
         <UnifiedFeedPage />
       </main>
+      <Footer />
       <Chatbot />
       <FloatingActionButton />
+      <FeedbackButton />
     </div>
   );
 }
