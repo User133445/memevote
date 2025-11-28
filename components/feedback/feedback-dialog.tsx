@@ -53,7 +53,8 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
     if (connected && publicKey && !wallet) {
       setWallet(publicKey.toString());
     }
-  }, [connected, publicKey, wallet]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connected, publicKey]); // wallet removed from deps to avoid unnecessary re-renders
 
   const handleSubmit = async () => {
     if (!category || !message.trim()) {
