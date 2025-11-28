@@ -126,41 +126,33 @@ serve(async (req: Request) => {
       const memeAge = Date.now() - new Date(memeData.created_at).getTime()
       const memeAgeHours = memeAge / (1000 * 60 * 60)
 
-      // Minimum requirements
-      const minAccountAge = 7 // days
-      const minMemeAge = 24 // hours
-      const minViews = 100
-      const minScore = 50
-
+      // Minimum requirements (sans barrières d'âge pour faciliter l'onboarding)
+      const minViews = 50 // Réduit de 100 à 50 pour être plus accessible
+      const minScore = 30 // Réduit de 50 à 30 pour encourager la participation
+      
       // Check if eligible
       let isEligible = true
       const reasons: string[] = []
 
-      if (accountAge < minAccountAge) {
-        isEligible = false
-        reasons.push(`Compte trop récent (${Math.round(accountAge)} jours)`)
-      }
-
-      if (memeAgeHours < minMemeAge) {
-        isEligible = false
-        reasons.push(`Meme trop récent (${Math.round(memeAgeHours)}h)`)
-      }
+      // On garde seulement les vérifications essentielles anti-abus
+      // Plus de vérification d'âge de compte (7 jours) - permet aux nouveaux users de gagner rapidement
+      // Plus de vérification d'âge de meme (24h) - permet aux memes récents de gagner
 
       if (memeData.views < minViews) {
         isEligible = false
-        reasons.push(`Pas assez de vues (${memeData.views})`)
+        reasons.push(`Pas assez de vues (${memeData.views}, minimum ${minViews})`)
       }
 
       if (memeData.score < minScore) {
         isEligible = false
-        reasons.push(`Score trop bas (${memeData.score})`)
+        reasons.push(`Score trop bas (${memeData.score}, minimum ${minScore})`)
       }
 
-      // Check self-vote ratio (suspicious if > 20%)
+      // Check self-vote ratio (suspicious if > 20%) - GARDE CETTE PROTECTION, c'est la plus importante
       const selfVoteRatio = memeData.score > 0 ? userVoteCount / memeData.score : 0
       if (selfVoteRatio > 0.2) {
         isEligible = false
-        reasons.push(`Trop de votes sur son propre meme (${Math.round(selfVoteRatio * 100)}%)`)
+        reasons.push(`Trop de votes sur son propre meme (${Math.round(selfVoteRatio * 100)}%, max 20%)`)
       }
 
       if (!isEligible) {

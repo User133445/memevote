@@ -29,30 +29,19 @@ export function checkMemeEligibility(data: MemeEligibilityData): AbuseCheckResul
   const flags: string[] = [];
   let fraudScore = 0;
 
-  // 1. Minimum account age (7 days)
-  if (data.accountAge < 7) {
-    fraudScore += 20;
-    flags.push(`Compte trop récent (${data.accountAge} jours, minimum 7)`);
-  }
+  // Vérifications simplifiées - plus de barrières d'âge pour faciliter l'onboarding
+  // On garde seulement les protections essentielles contre les bots
 
-  // 2. Minimum meme age (24 hours)
-  const memeAge = Date.now() - new Date(data.memeCreatedAt).getTime();
-  const memeAgeHours = memeAge / (1000 * 60 * 60);
-  if (memeAgeHours < 24) {
-    fraudScore += 15;
-    flags.push(`Meme trop récent (${Math.round(memeAgeHours)}h, minimum 24h)`);
-  }
-
-  // 3. Minimum views (100 views)
-  if (data.memeViews < 100) {
+  // 1. Minimum views (réduit à 50 pour être plus accessible)
+  if (data.memeViews < 50) {
     fraudScore += 10;
-    flags.push(`Pas assez de vues (${data.memeViews}, minimum 100)`);
+    flags.push(`Pas assez de vues (${data.memeViews}, minimum 50)`);
   }
 
-  // 4. Minimum score (50 points)
-  if (data.memeScore < 50) {
+  // 2. Minimum score (réduit à 30 pour encourager la participation)
+  if (data.memeScore < 30) {
     fraudScore += 10;
-    flags.push(`Score trop bas (${data.memeScore}, minimum 50)`);
+    flags.push(`Score trop bas (${data.memeScore}, minimum 30)`);
   }
 
   // 5. Suspicious vote pattern (user voted too many times on their own meme)
@@ -112,12 +101,12 @@ export async function checkMultiAccountAbuse(
  */
 export function getMinimumRequirements() {
   return {
-    accountAgeDays: 7,
-    memeAgeHours: 24,
-    minViews: 100,
-    minScore: 50,
+    accountAgeDays: 0, // Pas de barrière d'âge pour faciliter l'onboarding
+    memeAgeHours: 0, // Pas de barrière d'âge pour les memes
+    minViews: 50, // Réduit de 100 à 50
+    minScore: 30, // Réduit de 50 à 30
     maxEngagementRate: 0.5, // 50%
-    maxSelfVoteRatio: 0.2, // 20%
+    maxSelfVoteRatio: 0.2, // 20% - GARDE cette protection importante
   };
 }
 
