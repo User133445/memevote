@@ -63,9 +63,12 @@ serve(async (req: Request) => {
       )
     }
 
-    // Calculate rewards distribution
+    // Calculate rewards distribution with anti-abuse checks
     // Top 1 = 1500 USDC, Top 2-10 = 500 USDC, Top 11-50 = 100 USDC
-    const rewards = leaderboard.map((entry: any, index: number) => {
+    const rewards = []
+    
+    for (let index = 0; index < leaderboard.length && index < 50; index++) {
+      const entry = leaderboard[index]
       let amount = 0
       if (index === 0) {
         amount = 1500 // Top 1
@@ -78,15 +81,101 @@ serve(async (req: Request) => {
       // Extract user_id and wallet_address from nested structure
       const meme = entry.memes as any
       const profile = meme?.profiles as any
-      
-      return {
-        user_id: meme?.user_id,
-        wallet_address: profile?.wallet_address,
+      const user_id = meme?.user_id
+      const wallet_address = profile?.wallet_address
+
+      if (!user_id || !wallet_address) {
+        console.warn(`Skipping entry ${index + 1}: missing user_id or wallet_address`)
+        continue
+      }
+
+      // Anti-abuse checks
+      // Get meme details
+      const { data: memeData } = await supabaseClient
+        .from('memes')
+        .select('created_at, views, score, user_id')
+        .eq('id', entry.meme_id)
+        .single()
+
+      if (!memeData) {
+        console.warn(`Skipping entry ${index + 1}: meme not found`)
+        continue
+      }
+
+      // Get user account age
+      const { data: userProfile } = await supabaseClient
+        .from('profiles')
+        .select('created_at')
+        .eq('id', user_id)
+        .single()
+
+      const accountAge = userProfile 
+        ? (Date.now() - new Date(userProfile.created_at).getTime()) / (1000 * 60 * 60 * 24)
+        : 0
+
+      // Get user's votes on this meme
+      const { data: userVotes } = await supabaseClient
+        .from('votes')
+        .select('id')
+        .eq('meme_id', entry.meme_id)
+        .eq('user_id', user_id)
+
+      const userVoteCount = userVotes?.length || 0
+
+      // Check eligibility
+      const memeAge = Date.now() - new Date(memeData.created_at).getTime()
+      const memeAgeHours = memeAge / (1000 * 60 * 60)
+
+      // Minimum requirements
+      const minAccountAge = 7 // days
+      const minMemeAge = 24 // hours
+      const minViews = 100
+      const minScore = 50
+
+      // Check if eligible
+      let isEligible = true
+      const reasons: string[] = []
+
+      if (accountAge < minAccountAge) {
+        isEligible = false
+        reasons.push(`Compte trop récent (${Math.round(accountAge)} jours)`)
+      }
+
+      if (memeAgeHours < minMemeAge) {
+        isEligible = false
+        reasons.push(`Meme trop récent (${Math.round(memeAgeHours)}h)`)
+      }
+
+      if (memeData.views < minViews) {
+        isEligible = false
+        reasons.push(`Pas assez de vues (${memeData.views})`)
+      }
+
+      if (memeData.score < minScore) {
+        isEligible = false
+        reasons.push(`Score trop bas (${memeData.score})`)
+      }
+
+      // Check self-vote ratio (suspicious if > 20%)
+      const selfVoteRatio = memeData.score > 0 ? userVoteCount / memeData.score : 0
+      if (selfVoteRatio > 0.2) {
+        isEligible = false
+        reasons.push(`Trop de votes sur son propre meme (${Math.round(selfVoteRatio * 100)}%)`)
+      }
+
+      if (!isEligible) {
+        console.warn(`Skipping reward for rank ${index + 1}: ${reasons.join(', ')}`)
+        continue
+      }
+
+      rewards.push({
+        user_id,
+        wallet_address,
         amount,
         rank: index + 1,
         score: entry.score,
-      }
-    }).filter((r: any) => r.amount > 0) // Only include users who get rewards
+      })
+    }
 
     // Log rewards for debugging
     console.log(`Distributing rewards to ${rewards.length} users`)
