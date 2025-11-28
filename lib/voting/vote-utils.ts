@@ -121,6 +121,7 @@ export async function checkVoteEligibility(
 export async function getUserVoteStats(userId: string): Promise<{
   votesToday: number;
   votesLimit: number;
+  votesRemaining: number;
   unlimited: boolean;
   stakingTier: string | null;
   stakedAmount: number;
@@ -130,6 +131,7 @@ export async function getUserVoteStats(userId: string): Promise<{
     return {
       votesToday: 0,
       votesLimit: 10,
+      votesRemaining: 10,
       unlimited: false,
       stakingTier: null,
       stakedAmount: 0,
@@ -171,9 +173,13 @@ export async function getUserVoteStats(userId: string): Promise<{
     votesLimit = 50;
   }
 
+  // Calculate remaining votes
+  const votesRemaining = unlimited ? -1 : Math.max(0, votesLimit - voteCount);
+
   return {
     votesToday: voteCount,
     votesLimit,
+    votesRemaining,
     unlimited,
     stakingTier,
     stakedAmount,
