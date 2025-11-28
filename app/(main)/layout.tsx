@@ -2,7 +2,6 @@ import { Navbar } from "@/components/navbar";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import { FloatingActionButton } from "@/components/floating-action-button";
 import { Footer } from "@/components/footer";
-import { FeedbackButton } from "@/components/feedback/feedback-button";
 
 export default async function MainLayout({
   children,
@@ -16,7 +15,6 @@ export default async function MainLayout({
       <Footer />
       <Chatbot />
       <FloatingActionButton />
-      <FeedbackButton />
     </div>
   );
 }
