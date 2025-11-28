@@ -66,6 +66,7 @@ serve(async (req: Request) => {
     // Calculate rewards distribution with anti-abuse checks
     // Top 1 = 1500 USDC, Top 2-10 = 500 USDC, Top 11-50 = 100 USDC
     const rewards = []
+    let actualRank = 0 // Separate counter for actual reward positions (no gaps)
     
     for (let index = 0; index < leaderboard.length && index < 50; index++) {
       const entry = leaderboard[index]
