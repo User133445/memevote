@@ -2,7 +2,7 @@
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Wallet, LogOut } from "lucide-react";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ import { MultiChainConnect } from "./multi-chain-connect";
 export function WalletConnect() {
   const { publicKey, disconnect, connected } = useWallet();
   const { setVisible } = useWalletModal();
-  const { address: evmAddress, isConnected: evmConnected } = useAccount();
+  // const { address: evmAddress, isConnected: evmConnected } = useAccount();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -75,6 +75,9 @@ export function WalletConnect() {
                           (window as any).okxwallet ? "OKX" :
                           (window as any).trustwallet ? "Trust Wallet" :
                           (window as any).ledger ? "Ledger" : "Unknown";
+        
+        // Check for referral code
+        const referralCode = localStorage.getItem("referral_code");
 
         // Create user profile
         const { error: profileError } = await supabase
@@ -87,7 +90,15 @@ export function WalletConnect() {
             level: 1,
             wallet_name: walletName,
             first_connection_bonus_claimed: false,
+            referred_by: referralCode || null, // Add referred_by if exists
           });
+          
+        // Process referral reward if code exists
+        if (referralCode && !profileError) {
+           // This could be handled by a database trigger or edge function
+           // But for now we just ensure the relationship is stored
+           console.log("User signed up with referral code:", referralCode);
+        }
 
         if (profileError) {
           console.error("Profile creation error:", profileError);
@@ -152,7 +163,7 @@ export function WalletConnect() {
   };
 
   // Show multi-chain connect if either chain is connected
-  if (connected || evmConnected) {
+  if (connected) { // || evmConnected
     return <MultiChainConnect />;
   }
 
