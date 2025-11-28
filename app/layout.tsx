@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "@/components/ui/toaster";
 import Script from "next/script";
+import { ReferralTracker } from "@/components/referral/referral-tracker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -68,6 +69,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Providers>
+          <ReferralTracker />
           {children}
           <Toaster />
         </Providers>
