@@ -5,7 +5,6 @@ import { Navbar } from "@/components/navbar";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import { FloatingActionButton } from "@/components/floating-action-button";
 import { Footer } from "@/components/footer";
-import { FeedbackButton } from "@/components/feedback/feedback-button";
 
 export default function HomePage() {
   return (
@@ -17,7 +16,6 @@ export default function HomePage() {
       <Footer />
       <Chatbot />
       <FloatingActionButton />
-      <FeedbackButton />
     </div>
   );
 }
