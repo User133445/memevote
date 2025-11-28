@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createClient } from "@/lib/supabase/client";
 import { MemeCard } from "@/components/meme/meme-card";
@@ -8,11 +8,11 @@ import { useInView } from "react-intersection-observer";
 import { Loader2, Sparkles, Home, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UploadDialog } from "@/components/upload/upload-dialog";
 import { AdBanner } from "@/components/ads/ad-banner";
 import { DailySpinWheel } from "@/components/daily-spin/daily-spin-wheel";
 import { usePremium } from "@/hooks/use-premium";
 import { cn } from "@/lib/utils";
+import { FloatingActionButton } from "@/components/floating-action-button";
 
 // ELO-based ranking algorithm (from foryou page)
 async function calculateELOScore(memeId: string, won: boolean, opponentElo: number) {
@@ -131,40 +131,10 @@ export function UnifiedFeedPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const { ref, inView } = useInView();
   const { isPremium } = usePremium();
 
-  // Fetch memes based on active tab
-  useEffect(() => {
-    if (activeTab === "feed") {
-      fetchFeed();
-    } else {
-      if (connected && publicKey && supabase) {
-        fetchPersonalizedFeed();
-      } else {
-        fetchTrendingFeed();
-      }
-    }
-  }, [activeTab, connected, publicKey]);
-
-  useEffect(() => {
-    if (inView && hasMore && !loading) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      if (activeTab === "feed") {
-        fetchFeed(nextPage);
-      } else {
-        if (connected && publicKey) {
-          fetchPersonalizedFeed(nextPage);
-        } else {
-          fetchTrendingFeed(nextPage);
-        }
-      }
-    }
-  }, [inView, hasMore, loading, activeTab]);
-
-  const fetchFeed = async (pageNum: number = 0) => {
+  const fetchFeed = useCallback(async (pageNum: number = 0) => {
     if (!supabase) {
       setLoading(false);
       return;
@@ -194,38 +164,9 @@ export function UnifiedFeedPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
 
-  const fetchPersonalizedFeed = async (pageNum: number = 0) => {
-    if (!supabase || !publicKey) return;
-
-    try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
-        fetchTrendingFeed(pageNum);
-        return;
-      }
-
-      const personalizedMemes = await getPersonalizedFeed(user.user.id, pageNum);
-      
-      if (personalizedMemes && personalizedMemes.length > 0) {
-        setMemes((prev) => {
-          const newMemes = personalizedMemes.filter((m: any) => !prev.some((p: any) => p.id === m.id));
-          return pageNum === 0 ? personalizedMemes : [...prev, ...newMemes];
-        });
-        setHasMore(personalizedMemes.length === 10);
-      } else {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.error("Error fetching personalized feed:", error);
-      fetchTrendingFeed(pageNum);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchTrendingFeed = async (pageNum: number = 0) => {
+  const fetchTrendingFeed = useCallback(async (pageNum: number = 0) => {
     if (!supabase) {
       setLoading(false);
       return;
@@ -255,7 +196,72 @@ export function UnifiedFeedPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [supabase]);
+
+  const fetchPersonalizedFeed = useCallback(async (pageNum: number = 0) => {
+    if (!supabase || !publicKey) return;
+
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        fetchTrendingFeed(pageNum);
+        return;
+      }
+
+      const personalizedMemes = await getPersonalizedFeed(user.user.id, pageNum);
+      
+      if (personalizedMemes && personalizedMemes.length > 0) {
+        setMemes((prev) => {
+          const newMemes = personalizedMemes.filter((m: any) => !prev.some((p: any) => p.id === m.id));
+          return pageNum === 0 ? personalizedMemes : [...prev, ...newMemes];
+        });
+        setHasMore(personalizedMemes.length === 10);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching personalized feed:", error);
+      fetchTrendingFeed(pageNum);
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase, publicKey, fetchTrendingFeed]);
+
+  // Fetch memes based on active tab
+  useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+    
+    if (activeTab === "feed") {
+      fetchFeed();
+    } else {
+      if (connected && publicKey) {
+        fetchPersonalizedFeed();
+      } else {
+        fetchTrendingFeed();
+      }
+    }
+  }, [activeTab, connected, publicKey, supabase, fetchFeed, fetchPersonalizedFeed, fetchTrendingFeed]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    
+    if (inView && hasMore && !loading) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      if (activeTab === "feed") {
+        fetchFeed(nextPage);
+      } else {
+        if (connected && publicKey) {
+          fetchPersonalizedFeed(nextPage);
+        } else {
+          fetchTrendingFeed(nextPage);
+        }
+      }
+    }
+  }, [inView, hasMore, loading, activeTab, supabase, connected, publicKey, page, fetchFeed, fetchPersonalizedFeed, fetchTrendingFeed]);
 
   // Reset when tab changes
   useEffect(() => {
@@ -285,7 +291,8 @@ export function UnifiedFeedPage() {
             .select("*, profiles:user_id(username, avatar_url)")
             .eq("id", payload.new.id)
             .single()
-            .then(({ data }: { data: any }) => {
+            .then((response: { data: any }) => {
+              const { data } = response;
               if (data) {
                 setMemes((prev) => [data, ...prev]);
               }
@@ -298,6 +305,17 @@ export function UnifiedFeedPage() {
       supabase.removeChannel(channel);
     };
   }, [supabase]);
+
+  // Show error if Supabase is not configured
+  if (!supabase) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <p className="text-muted-foreground">
+          Configuration Supabase manquante. Veuillez configurer les variables d&apos;environnement.
+        </p>
+      </div>
+    );
+  }
 
   if (loading && memes.length === 0) {
     return (
@@ -313,8 +331,8 @@ export function UnifiedFeedPage() {
   return (
     <div className="relative min-h-screen">
       {/* Tabs */}
-      <div className="sticky top-16 z-40 glass-effect border-b border-purple-500/20 backdrop-blur-xl bg-black/50">
-        <div className="container mx-auto px-4">
+      <div className="sticky top-16 z-40 glass-effect border-b border-purple-500/20 backdrop-blur-xl bg-black/50 mb-4">
+        <div className="container mx-auto px-4 py-3">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "foryou" | "feed")} className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-black/50">
               <TabsTrigger value="foryou" className="gap-2">
@@ -332,7 +350,11 @@ export function UnifiedFeedPage() {
 
       <div className="container mx-auto px-4 pb-24 max-w-xl">
         {/* Ads Banner (Top) - Only if not premium */}
-        {!isPremium && <AdBanner variant="top" />}
+        {!isPremium && (
+          <div className="mb-6">
+            <AdBanner variant="top" />
+          </div>
+        )}
 
         {/* Empty State */}
         {memes.length === 0 && !loading && (
@@ -345,7 +367,11 @@ export function UnifiedFeedPage() {
               Be the first to drop a legendary meme and earn huge rewards.
             </p>
             <Button
-              onClick={() => setUploadDialogOpen(true)}
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(new CustomEvent('open-upload-dialog'));
+                }
+              }}
               variant="neon"
               size="lg"
               className="w-full sm:w-auto shadow-xl shadow-purple-500/20"
@@ -395,23 +421,7 @@ export function UnifiedFeedPage() {
       <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
         {/* Daily Spin Button */}
         <DailySpinWheel />
-        
-        {/* Upload Button */}
-        <Button
-          onClick={() => setUploadDialogOpen(true)}
-          size="lg"
-          className={cn(
-            "h-14 w-14 rounded-full shadow-2xl shadow-purple-500/50",
-            "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600",
-            "animate-pulse hover:animate-none transition-all"
-          )}
-        >
-          <Plus className="h-6 w-6" />
-        </Button>
       </div>
-
-      {/* Upload Dialog */}
-      <UploadDialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen} />
     </div>
   );
 }

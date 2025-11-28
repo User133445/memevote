@@ -118,7 +118,15 @@ export default function BattlesPage() {
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
           Battles ⚔️
         </h1>
-        <Button variant="neon">
+        <Button 
+          variant="neon"
+          onClick={() => {
+            toast({
+              title: "Fonctionnalité à venir",
+              description: "La création de battles sera bientôt disponible !",
+            });
+          }}
+        >
           <Swords className="mr-2 h-5 w-5" />
           Créer une Battle
         </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +32,18 @@ export function Chatbot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Listen for custom event to open chatbot
+  useEffect(() => {
+    const handleOpenChatbot = () => {
+      setIsOpen(true);
+    };
+
+    window.addEventListener('open-chatbot', handleOpenChatbot);
+    return () => {
+      window.removeEventListener('open-chatbot', handleOpenChatbot);
+    };
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim() || loading) return;
@@ -131,17 +144,13 @@ export function Chatbot() {
     return "Je ne suis pas sûr de comprendre 🤔\n\nPose-moi une question sur :\n• Upload de memes\n• Récompenses et gains\n• Staking\n• Voting\n• Parrainage\n• Premium\n• Battles\n• NFTs\n• Live feed\n\nOu tape 'aide' pour voir toutes les commandes !";
   };
 
+  // Don't show the floating button on the home page (UnifiedFeedPage handles it)
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+
+  // Don't show the floating button - FloatingActionButton handles it now
   if (!isOpen) {
-    return (
-      <Button
-        onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg shadow-purple-500/50 z-50"
-        variant="neon"
-        size="icon"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </Button>
-    );
+    return null;
   }
 
   return (

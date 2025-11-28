@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-serve(async (req) => {
+serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -65,7 +65,7 @@ serve(async (req) => {
 
     // Calculate rewards distribution
     // Top 1 = 1500 USDC, Top 2-10 = 500 USDC, Top 11-50 = 100 USDC
-    const rewards = leaderboard.map((entry, index) => {
+    const rewards = leaderboard.map((entry: any, index: number) => {
       let amount = 0
       if (index === 0) {
         amount = 1500 // Top 1
@@ -86,7 +86,7 @@ serve(async (req) => {
         rank: index + 1,
         score: entry.score,
       }
-    }).filter(r => r.amount > 0) // Only include users who get rewards
+    }).filter((r: any) => r.amount > 0) // Only include users who get rewards
 
     // Log rewards for debugging
     console.log(`Distributing rewards to ${rewards.length} users`)
@@ -100,7 +100,7 @@ serve(async (req) => {
     // 3. Record the transaction hash
 
     // Store reward records
-    const rewardRecords = rewards.map(reward => ({
+    const rewardRecords = rewards.map((reward: any) => ({
       user_id: reward.user_id,
       wallet_address: reward.wallet_address,
       amount: reward.amount,
@@ -135,7 +135,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         message: `Distributed rewards to ${rewards.length} users`,
-        rewards: rewards.map(r => ({
+        rewards: rewards.map((r: any) => ({
           rank: r.rank,
           wallet: r.wallet_address,
           amount: r.amount
@@ -143,12 +143,14 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in distribute-rewards function:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorDetails = error instanceof Error ? error.toString() : String(error)
     return new Response(
       JSON.stringify({ 
-        error: error.message,
-        details: error.toString()
+        error: errorMessage,
+        details: errorDetails
       }),
       { 
         status: 500, 

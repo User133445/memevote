@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
 
 const deepseek = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY || "sk-310a753ad05e475c9f4a10c1f7e72756",
+  apiKey: process.env.DEEPSEEK_API_KEY || "",
   baseURL: "https://api.deepseek.com",
 });
 
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     // For moderation, we'll use a simple keyword check + AI categorization
     const moderationKeywords = ["hate", "violence", "nsfw", "explicit"];
     const contentLower = `${title} ${description || ""}`.toLowerCase();
-    const isFlagged = moderationKeywords.some(keyword => contentLower.includes(keyword));
+    const isFlagged = moderationKeywords.some((keyword: string) => contentLower.includes(keyword));
     const isNSFW = isFlagged; // Simplified check
 
     // Auto-categorize with AI

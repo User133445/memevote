@@ -22,6 +22,7 @@ export function WalletConnect() {
     if (connected && publicKey) {
       handleWalletAuth();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, publicKey]);
 
   const handleWalletAuth = async () => {

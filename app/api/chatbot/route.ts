@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
+// DeepSeek utilise l'API OpenAI compatible
 const deepseek = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY || "sk-310a753ad05e475c9f4a10c1f7e72756",
+  apiKey: process.env.DEEPSEEK_API_KEY || "",
   baseURL: "https://api.deepseek.com",
 });
 

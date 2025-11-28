@@ -26,6 +26,7 @@ export function InAppWallet() {
       fetchBalance();
       fetchTransactions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connected, publicKey, supabase]);
 
   const fetchBalance = async () => {

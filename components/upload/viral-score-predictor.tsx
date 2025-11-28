@@ -29,6 +29,7 @@ export function ViralScorePredictor({
     if (title && category) {
       calculateViralScore();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, description, category]);
 
   const calculateViralScore = async () => {

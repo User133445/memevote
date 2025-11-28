@@ -220,8 +220,8 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
         .limit(10);
 
       if (topMemes) {
-        const isInTop10 = topMemes.some(m => m.id === memeId);
-        const rank = topMemes.findIndex(m => m.id === memeId) + 1;
+        const isInTop10 = topMemes.some((m: any) => m.id === memeId);
+        const rank = topMemes.findIndex((m: any) => m.id === memeId) + 1;
 
         if (isInTop10 && rank <= 12) {
           // Send push notification (if implemented)

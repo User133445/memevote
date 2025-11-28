@@ -57,9 +57,9 @@ const mainNav = [
 ];
 
 // Menu "More" (Tout le reste) - OPTIMISÉ ET ORGANISÉ
+// Note: Upload est maintenant un popup sur la page d'accueil, pas besoin de lien séparé
 const moreNav = [
   // Création & Contenu
-  { href: "/upload", label: "Upload", icon: Upload, category: "create" },
   { href: "/battles", label: "Battles", icon: SwordsIcon, category: "create" },
   { href: "/rankings", label: "Rankings", icon: TrophyIcon, category: "create" },
   
