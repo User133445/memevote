@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { securityMiddleware, withCors } from "@/lib/security/middleware";
+import { RATE_LIMITS } from "@/lib/security/rate-limit";
 
 const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY || "",
@@ -7,6 +9,20 @@ const deepseek = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
+  // Apply security middleware
+  const { rateLimitResponse, corsPreflightResponse } = securityMiddleware(
+    request,
+    RATE_LIMITS.AI
+  );
+
+  if (corsPreflightResponse) {
+    return corsPreflightResponse;
+  }
+
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const { title, description, category } = await request.json();
 
@@ -60,14 +76,16 @@ Return ONLY a number between 0-100 representing viral score.`;
       if (category === "AI" || category === "Politics") score += 15;
       score = Math.min(score + Math.floor(Math.random() * 20), 100);
 
-      return NextResponse.json({ score });
+      const jsonResponse = NextResponse.json({ score });
+      return withCors(request, jsonResponse);
     }
   } catch (error: any) {
     console.error("Error calculating viral score:", error);
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: error.message || "Failed to calculate viral score" },
       { status: 500 }
     );
+    return withCors(request, errorResponse);
   }
 }
 

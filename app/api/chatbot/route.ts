@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { securityMiddleware, withCors } from "@/lib/security/middleware";
+import { RATE_LIMITS } from "@/lib/security/rate-limit";
 
 // DeepSeek utilise l'API OpenAI compatible
 const deepseek = new OpenAI({
@@ -8,6 +10,20 @@ const deepseek = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
+  // Apply security middleware
+  const { rateLimitResponse, corsPreflightResponse } = securityMiddleware(
+    request,
+    RATE_LIMITS.CHATBOT
+  );
+
+  if (corsPreflightResponse) {
+    return corsPreflightResponse;
+  }
+
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const { message } = await request.json();
 
@@ -49,13 +65,15 @@ Réponds de manière amicale et concise en français.`,
     const response = completion.choices[0]?.message?.content || 
       "Désolé, je n'ai pas pu générer de réponse.";
 
-    return NextResponse.json({ response });
+    const jsonResponse = NextResponse.json({ response });
+    return withCors(request, jsonResponse);
   } catch (error: any) {
     console.error("Chatbot error:", error);
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: error.message || "Erreur du chatbot" },
       { status: 500 }
     );
+    return withCors(request, errorResponse);
   }
 }
 

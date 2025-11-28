@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { createClient } from "@/lib/supabase/server";
+import { securityMiddleware, withCors } from "@/lib/security/middleware";
+import { RATE_LIMITS } from "@/lib/security/rate-limit";
 
 const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY || "",
@@ -8,6 +10,20 @@ const deepseek = new OpenAI({
 });
 
 export async function POST(request: NextRequest) {
+  // Apply security middleware
+  const { rateLimitResponse, corsPreflightResponse } = securityMiddleware(
+    request,
+    RATE_LIMITS.AI
+  );
+
+  if (corsPreflightResponse) {
+    return corsPreflightResponse;
+  }
+
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const { memeId, title, description, fileUrl } = await request.json();
 
@@ -58,17 +74,19 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", memeId);
 
-    return NextResponse.json({
+    const jsonResponse = NextResponse.json({
       approved: !isFlagged,
       isNSFW,
       suggestedCategory,
     });
+    return withCors(request, jsonResponse);
   } catch (error: any) {
     console.error("Moderation error:", error);
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { error: error.message || "Erreur de modération" },
       { status: 500 }
     );
+    return withCors(request, errorResponse);
   }
 }
 
