@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 import { formatNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { VoteAnimation } from "@/components/animations/vote-animation";
 import { Confetti } from "@/components/animations/confetti";
+import { checkVoteEligibility, getUserVoteStats } from "@/lib/voting/vote-utils";
 
 interface VoteButtonsProps {
   memeId: string;
@@ -23,6 +24,12 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
   const [showVoteAnimation, setShowVoteAnimation] = useState(false);
   const [voteType, setVoteType] = useState<"upvote" | "downvote">("upvote");
   const [showConfetti, setShowConfetti] = useState(false);
+  const [voteStats, setVoteStats] = useState<{
+    votesRemaining: number;
+    votesLimit: number;
+    unlimited: boolean;
+    stakingTier: string | null;
+  } | null>(null);
   const { publicKey, connected } = useWallet();
   const { toast } = useToast();
   const supabase = createClient();
@@ -30,8 +37,28 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
   useEffect(() => {
     if (connected && publicKey && supabase) {
       checkUserVote();
+      loadVoteStats();
     }
   }, [connected, publicKey, memeId]);
+
+  const loadVoteStats = async () => {
+    if (!supabase || !publicKey) return;
+    
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const stats = await getUserVoteStats(user.user.id);
+      setVoteStats({
+        votesRemaining: stats.votesRemaining,
+        votesLimit: stats.votesLimit,
+        unlimited: stats.unlimited,
+        stakingTier: stats.stakingTier,
+      });
+    } catch (error) {
+      console.error("Error loading vote stats:", error);
+    }
+  };
 
   const checkUserVote = async () => {
     if (!supabase || !publicKey) return;
@@ -111,21 +138,17 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
         console.error("Anti-cheat check failed:", antiCheatError);
       }
 
-      // Check rate limit
-      const { data: recentVotes } = await supabase
-        .from("votes")
-        .select("created_at")
-        .eq("user_id", user.user.id)
-        .gte("created_at", new Date(Date.now() - 5 * 60 * 1000).toISOString())
-        .limit(1);
-
-      if (recentVotes && recentVotes.length > 0) {
+      // Check vote eligibility (with staking tier)
+      const eligibility = await checkVoteEligibility(user.user.id, memeId);
+      
+      if (!eligibility.canVote) {
         toast({
-          title: "Rate limit",
-          description: "Attendez 5 minutes entre chaque vote gratuit",
+          title: "Vote impossible",
+          description: eligibility.reason || "Vous ne pouvez pas voter pour le moment",
           variant: "destructive",
         });
         setIsVoting(false);
+        loadVoteStats(); // Refresh stats
         return;
       }
 
@@ -193,9 +216,16 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
       // Check if meme entered Top 10
       checkTop10Status(newScore);
 
+      // Refresh vote stats
+      await loadVoteStats();
+
+      const remainingText = voteStats?.unlimited 
+        ? "Votes illimités" 
+        : `${voteStats?.votesRemaining || 0} votes restants`;
+
       toast({
         title: voteType === "up" ? "Upvote !" : "Downvote !",
-        description: `Score: ${newScore}`,
+        description: `Score: ${newScore} • ${remainingText}`,
       });
     } catch (error: any) {
       toast({
@@ -281,6 +311,22 @@ export function VoteButtons({ memeId, initialScore }: VoteButtonsProps) {
       >
         <ThumbsDown className="h-4 w-4" />
       </Button>
+      
+      {/* Vote stats indicator */}
+      {voteStats && connected && (
+        <div className="flex items-center gap-1 text-xs text-muted-foreground ml-2">
+          {voteStats.unlimited ? (
+            <>
+              <Zap className="h-3 w-3 text-yellow-400" />
+              <span>Illimité</span>
+            </>
+          ) : (
+            <span>
+              {voteStats.votesRemaining}/{voteStats.votesLimit}
+            </span>
+          )}
+        </div>
+      )}
     </div>
     </>
   );
