@@ -33,13 +33,13 @@ export function FloatingActionButton() {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               size="icon"
               className={cn(
-                "h-12 w-12 rounded-full shadow-lg shadow-purple-500/50",
+                "h-11 w-11 sm:h-12 sm:w-12 rounded-full shadow-lg shadow-purple-500/50",
                 "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600",
                 "transition-all hover:scale-110"
               )}
@@ -47,15 +47,15 @@ export function FloatingActionButton() {
               <Image
                 src="/favicon.svg"
                 alt="MemeVote"
-                width={24}
-                height={24}
-                className="brightness-0 invert"
+                width={20}
+                height={20}
+                className="brightness-0 invert sm:w-6 sm:h-6"
               />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="glass-effect border-purple-500/20 bg-black/95 min-w-[200px]"
+            className="glass-effect border-purple-500/20 bg-black/95 min-w-[180px] sm:min-w-[200px] mb-2 sm:mb-0"
           >
             <DropdownMenuItem
               onClick={() => setUploadDialogOpen(true)}

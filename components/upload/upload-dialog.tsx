@@ -406,12 +406,21 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="glass-effect border-purple-500/20 sm:max-w-2xl bg-black/95 max-h-[90vh] overflow-y-auto">
+        <DialogContent 
+          className="glass-effect border-purple-500/20 sm:max-w-2xl bg-black/95 max-h-[90vh] overflow-y-auto"
+          onInteractOutside={(e) => {
+            // Prevent closing when clicking on focused elements inside
+            const target = e.target as HTMLElement;
+            if (target.closest('[data-dropzone]')) {
+              e.preventDefault();
+            }
+          }}
+        >
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <DialogTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               Uploader un Meme
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm sm:text-base">
               Partagez votre meilleur meme et gagnez des récompenses !
             </DialogDescription>
           </DialogHeader>
@@ -422,8 +431,12 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
               <Label>Fichier *</Label>
               <div
                 {...getRootProps()}
+                data-dropzone
+                tabIndex={0}
+                role="button"
+                aria-label="Zone de dépôt de fichier"
                 className={cn(
-                "mt-2 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 relative overflow-hidden",
+                "mt-2 border-2 border-dashed rounded-lg p-4 sm:p-6 md:p-8 text-center cursor-pointer transition-all duration-300 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black",
                 isDragActive
                   ? "border-purple-500 bg-purple-500/20 scale-[1.02] shadow-lg shadow-purple-500/30"
                   : "border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/5",

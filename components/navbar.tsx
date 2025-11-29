@@ -102,11 +102,11 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 glass-effect border-b border-purple-500/20 backdrop-blur-xl bg-black/50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16 min-h-[56px]">
           
            {/* Left: Logo + Ticker + Countdown */}
-           <div className="flex items-center gap-4">
+           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0 min-w-0">
              <Logo />
              <div className="hidden lg:flex items-center gap-3">
                 <SolPriceTicker />
@@ -126,7 +126,7 @@ export function Navbar() {
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
              
              {/* Main Nav Buttons */}
             <div className="hidden md:flex items-center gap-2">
@@ -210,13 +210,13 @@ export function Navbar() {
             </div>
 
             {/* Login / Wallet */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               {!connected && (
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="secondary" size="sm" className="hidden sm:flex gap-2 font-bold">
-                      <LogIn className="h-4 w-4" />
-                      Login
+                    <Button variant="secondary" size="sm" className="hidden sm:flex gap-1.5 sm:gap-2 font-bold text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9">
+                      <LogIn className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span className="hidden md:inline">Login</span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="glass-effect border-purple-500/20 sm:max-w-md bg-black/95">

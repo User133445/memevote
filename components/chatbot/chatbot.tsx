@@ -154,7 +154,7 @@ export function Chatbot() {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-96 h-[600px] flex flex-col glass-effect shadow-2xl z-50">
+    <Card className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-96 max-w-[calc(100vw-2rem)] sm:max-w-md h-[calc(100vh-8rem)] sm:h-[600px] max-h-[600px] flex flex-col glass-effect shadow-2xl z-50">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <Bot className="h-5 w-5 text-purple-400" />

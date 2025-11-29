@@ -332,16 +332,16 @@ export function UnifiedFeedPage() {
   return (
     <div className="relative min-h-screen">
       {/* Tabs */}
-      <div className="sticky top-16 z-40 glass-effect border-b border-purple-500/20 backdrop-blur-xl bg-black/50 mb-4">
-        <div className="container mx-auto px-4 py-3">
+      <div className="sticky top-14 sm:top-16 z-40 glass-effect border-b border-purple-500/20 backdrop-blur-xl bg-black/50 mb-2 sm:mb-4">
+        <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "foryou" | "feed")} className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-black/50">
-              <TabsTrigger value="foryou" className="gap-2">
-                <Sparkles className="h-4 w-4" />
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-black/50 h-9 sm:h-10">
+              <TabsTrigger value="foryou" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
                 For You
               </TabsTrigger>
-              <TabsTrigger value="feed" className="gap-2">
-                <Home className="h-4 w-4" />
+              <TabsTrigger value="feed" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Home className="h-3 w-3 sm:h-4 sm:w-4" />
                 Feed
               </TabsTrigger>
             </TabsList>
@@ -356,8 +356,8 @@ export function UnifiedFeedPage() {
             <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center mb-6">
               <Sparkles className="h-10 w-10 text-purple-500" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Feed is quiet... too quiet.</h2>
-            <p className="text-muted-foreground mb-8 max-w-md">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 px-2">Feed is quiet... too quiet.</h2>
+            <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 max-w-md px-2">
               Be the first to drop a legendary meme and earn huge rewards.
             </p>
             <Button
@@ -368,9 +368,9 @@ export function UnifiedFeedPage() {
               }}
               variant="neon"
               size="lg"
-              className="w-full sm:w-auto shadow-xl shadow-purple-500/20"
+              className="w-full sm:w-auto shadow-xl shadow-purple-500/20 text-sm sm:text-base px-6 sm:px-8 h-11 sm:h-12"
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               Upload First Meme
             </Button>
           </div>
@@ -396,7 +396,7 @@ export function UnifiedFeedPage() {
               }
             }
           }}
-          className="fixed top-32 bottom-0 left-0 right-0"
+          className="fixed top-28 sm:top-32 bottom-0 left-0 right-0"
         />
       )}
 
@@ -410,7 +410,7 @@ export function UnifiedFeedPage() {
         )}
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col gap-3">
         {/* Upload & Support Button */}
         <FloatingActionButton />
       </div>
